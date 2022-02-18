@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "GYM Sharks",
+    "slug": "gymSharks",
+    "version": "1.0.1",
+    "privacy": "public",
+    "description": "App that helps the athlete track his results at the gym.",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "android": {
+      "package": "gs.gymshark"
+    }
+  }
+}
