@@ -68,9 +68,6 @@ export default class History extends Component { // - navigation props
     let kgOrBodyWeightStr = 'kg'; // kg by default
     planLength = thePlan.resultsHistory[0].length;
     
-    
-    
-
     planUIarr.push(
       <Text style={{...globalStyles.subTitle, alignSelf:"center", borderBottomWidth: 1 }}>
         {thePlan.title}
@@ -84,7 +81,7 @@ export default class History extends Component { // - navigation props
       }
       else {
         kgOrBodyWeightStr = ' kg: ';
-        kgVal = `${planData.kg},`;
+        kgVal = `${planData.kgVal},`; 
       }
 
       planUIarr.push(

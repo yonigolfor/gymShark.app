@@ -9,6 +9,7 @@ import * as yup from 'yup';
 import { Dimensions } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 //import { TouchableOpacity } from 'react-native-gesture-handler';
+import update_post from "../myObjects/dbCommunication";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get('screen').height;
@@ -78,24 +79,26 @@ checkSetsReps = (val, startNum, endNum) => {
 
 updateDb = (planList, user_id) => {
   console.log('Try: updating DB');
-  fetch('http://192.168.1.156:4000/update',
-  {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-          'planList': planList,
-          'user_id': user_id
-      })
-  })
+  let data = {user_id, planList};
+  update_post(data);
+  // fetch('http://192.168.1.156:4000/update',
+  // {
+  //     method: 'POST',
+  //     headers: {
+  //         'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //         'planList': planList,
+  //         'user_id': user_id
+  //     })
+  // })
   
-  .then(res=>res.json())
-  .then(data=>{
-      console.log('the data');
-      console.log(data);
-  })
-  .catch((err)=> console.log(err))
+  // .then(res=>res.json())
+  // .then(data=>{
+  //     console.log('the data');
+  //     console.log(data);
+  // })
+  // .catch((err)=> console.log(err))
 }
 
 checkDefaultRepsSets = (values) => {

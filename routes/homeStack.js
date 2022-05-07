@@ -13,9 +13,12 @@ import Shop from '../screens/shop';
 import BuySucceed from '../screens/buySucceed';
 
 const screens = {
-    // Login: {
-    //     screen: Login
-    // },
+    Signup: {
+        screen: Signup
+    },
+    Login: {
+        screen: Login
+    },
     Home: {
         screen: Home,
     },
@@ -33,9 +36,6 @@ const screens = {
     },
     NewMeasurementsForm: {
         screen: NewMeasurementsForm,
-    },
-    Signup: {
-        screen: Signup
     },
     History: {
         screen: History

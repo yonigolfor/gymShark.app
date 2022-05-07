@@ -13,7 +13,7 @@ export const globalStyles = StyleSheet.create({
     },
     textTitle : {
         textAlign: "center",
-        fontSize: 40,
+        fontSize: 46,
         fontFamily: 'serif',
         fontStyle: "italic",
         fontWeight: '900',
@@ -84,6 +84,15 @@ export const globalStyles = StyleSheet.create({
         borderRadius: 30,
         padding: "0.8%",
        
+      },
+      textAppTitle: {
+        textAlign: "center",
+        fontSize: 55,
+        fontFamily: 'serif',
+        fontStyle: "italic",
+        fontWeight: '900',
+        marginBottom: 20,
+        color:'gray' // basic: 'gray'
       }
           // textButtonsHome: {
     //     backgroundColor: 'white',

@@ -121,8 +121,10 @@ export default class Exercise extends Component {
 
     addToPlanInputs = (name) => {
         //let place = this.props.plan.exercisesNames.indexOf(name);
+        
         let place = this.props.indexInPlan;
         this.props.plan.lastUpdated[place] = this.state;
+       
     }
 
 
@@ -180,8 +182,9 @@ export default class Exercise extends Component {
                 return 1;
               
             return 2;
-        }
-
+        }      
+        
+       
         return (
         <View>
             {

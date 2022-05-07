@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "973093896324",
+    "project_id": "gymsharks-android",
+    "storage_bucket": "gymsharks-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973093896324:android:785f0aeb309f59672502d1",
+        "android_client_info": {
+          "package_name": "il.com.gymSharks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "973093896324-fj907cmsghm43ftgmm9copfd6npudbdt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKC9PP6sK6Zu0KKscGHYLvVk8148zpDZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "973093896324-fj907cmsghm43ftgmm9copfd6npudbdt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

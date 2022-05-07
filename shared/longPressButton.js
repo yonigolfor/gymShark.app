@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Animated} from 'react-native'
 import { Easing } from 'react-native-reanimated';
 import Overlay from 'react-native-modal-overlay';
 import MyButton from '../shared/myButton';
+import update_post from '../myObjects/dbCommunication';
 
 
 triggerAnimation = (animation, setpopUp) => {
@@ -49,46 +50,50 @@ removeAPlan = (planList, title, GraphResults, startOfMonthResults) => {
 
 updateDbPlanList = (planList, user_id) => {
     console.log('Try: updating DB');
-    fetch('http://192.168.1.156:4000/update',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'planList': planList,
-            'user_id': user_id
-        })
-    })
+    let data = {user_id, planList};
+    update_post(data);
+    // fetch('http://192.168.1.156:4000/update',
+    // {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         'planList': planList,
+    //         'user_id': user_id
+    //     })
+    // })
     
-    .then(res=>res.json())
-    .then(data=>{
-        // console.log('the data');
-        // console.log(data);
-    })
-    .catch((err)=> console.log(err))
+    // .then(res=>res.json())
+    // .then(data=>{
+    //     // console.log('the data');
+    //     // console.log(data);
+    // })
+    // .catch((err)=> console.log(err))
   }
   
   updateDbGraphResults = (GraphResults, user_id) => {
     console.log('Try: updating DB');
-    fetch('http://192.168.1.156:4000/update',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'GraphResults': GraphResults,
-            'user_id': user_id
-        })
-    })
+    let data = {user_id, GraphResults};
+    update_post(data);
+    // fetch('http://192.168.1.156:4000/update',
+    // {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         'GraphResults': GraphResults,
+    //         'user_id': user_id
+    //     })
+    // })
     
-    .then(res=>res.json())
-    .then(data=>{
-        // console.log('the data');
-        // console.log(data);
-    })
-    .catch((err)=> console.log(err))
+    // .then(res=>res.json())
+    // .then(data=>{
+    //     // console.log('the data');
+    //     // console.log(data);
+    // })
+    // .catch((err)=> console.log(err))
   }
 
 

@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "GYM Sharks",
-    "slug": "gymSharks",
-    "version": "1.0.1",
+    "name": "GolFit",
+    "slug": "GolFit",
+    "version": "5.0.1",
     "privacy": "public",
     "description": "App that helps the athlete track his results at the gym.",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash2.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,7 +25,8 @@
       "favicon": "./assets/favicon.png"
     },
     "android": {
-      "package": "gs.gymshark"
+      "package": "gf.golfit",
+      "versionCode": 6
     }
   }
 }

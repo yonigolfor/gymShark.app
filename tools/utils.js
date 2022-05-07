@@ -1,5 +1,5 @@
 
-const Title = 'GYM Sharks';
+const Title = 'GolFit';
 
 getMonth = () => {
     return numToMonth(new Date().getMonth() + 1);

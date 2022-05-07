@@ -45,6 +45,8 @@ decreaseScroll = () => {
     const planList = this.props.navigation.getParam('planList');
     const GraphDates = this.props.navigation.getParam('GraphDates');
     const resultsHistory = this.props.navigation.getParam('resultsHistory');
+    const GraphResults = this.props.navigation.getParam('GraphResults');
+  
 
     return(
       <View style={globalStyles.container}>
@@ -105,7 +107,7 @@ decreaseScroll = () => {
             planList.length > 1 && 
             <PlansBtnOptions 
             user_id= {user_id}
-            GraphResults= {this.props.navigation.getParam('GraphResults')}
+            GraphResults= {GraphResults}
             planList={planList} 
             GraphDates={GraphDates}
             startOfMonthResults = {this.props.navigation.getParam('startOfMonthResults')}
@@ -139,10 +141,10 @@ decreaseScroll = () => {
             planList.length == 1 &&
             <View style={styles.showPlan}>
                 <Plan
-                user_id= {this.props.navigation.getParam('user_id')}
-                GraphResults= {this.props.navigation.getParam('GraphResults')}
-                planList= {this.props.navigation.getParam('planList')}
-                GraphDates = {this.props.navigation.getParam('GraphDates')}
+                user_id= {user_id}
+                GraphResults= {GraphResults}
+                planList= {planList}
+                GraphDates = {GraphDates}
                 startOfMonthResults = {this.props.navigation.getParam('startOfMonthResults')}
                 plan={planList[0]}
                 navigation={this.props.navigation}

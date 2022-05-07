@@ -9,7 +9,7 @@ import Overlay from 'react-native-modal-overlay';
 import { Utils } from '../tools/utils';
 import { globalStyles } from '../shared/styles';
 import LoadingScreen from '../screens/loadingScreen';
-
+import update_post from '../myObjects/dbCommunication';
 
 calculateResult = (inputs) => {
 let result, repsCounter, finalResult = 0, kgVal; // kgVal in case of Body Weight.
@@ -54,6 +54,7 @@ createGraphObject = (planTitle, GraphResults, user_id) => {
         data: [],
     };
     GraphResults.push(obj);
+
     //update db
     updateDbGraphResults(GraphResults, user_id)
 }
@@ -143,93 +144,104 @@ getStartOfMonthArray = (GraphResults, GraphDates, startOfMonthResults, user_id) 
   
 
   updateDbGraphResults = (GraphResults, user_id) => {
-    console.log('Try: updating DB');
-    fetch('http://192.168.1.156:4000/update',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'GraphResults': GraphResults,
-            'user_id': user_id
-        })
-    })
+    console.log('Try: updating DB GraphResults');
+    console.log('updateDbGraphResults', GraphResults);
+    console.log('graphResults: ', GraphResults);
+    let data = {user_id, GraphResults};
+    update_post(data);
+    // fetch('http://192.168.1.156:4000/update',
+    // {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         'GraphResults': GraphResults,
+    //         'user_id': user_id
+    //     })
+    // })
     
-    .then(res=>res.json())
-    .then(data=>{
-        // console.log('the data');
-        // console.log(data);
-    })
-    .catch((err)=> console.log(err))
+    // .then(res=>res.json())
+    // .then(data=>{
+    //     // console.log('the data');
+    //     // console.log(data);
+    // })
+    // .catch((err)=> console.log(err))
   }
 
 
   updateDbStartOfMonthResults = (startOfMonthResults, user_id) => {
-    console.log('Try: updating DB');
-    fetch('http://192.168.1.156:4000/update',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'startOfMonthResults': startOfMonthResults,
-            'user_id': user_id
-        })
-    })
+    console.log('Try: updating DB startOfMonthRes');
+    let data = {user_id, startOfMonthResults};
+    update_post(data);
+    // fetch('http://192.168.1.156:4000/update',
+    // {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         'startOfMonthResults': startOfMonthResults,
+    //         'user_id': user_id
+    //     })
+    // })
     
-    .then(res=>res.json())
-    .then(data=>{
-        // console.log('the data');
-        // console.log(data);
-    })
-    .catch((err)=> console.log(err))
+    // .then(res=>res.json())
+    // .then(data=>{
+    //     // console.log('the data');
+    //     // console.log(data);
+    // })
+    // .catch((err)=> console.log(err))
   }
 
 
   updateDbGraphDates = (GraphDates, user_id) => {
-    console.log('Try: updating DB');
-    fetch('http://192.168.1.156:4000/update',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'GraphDates': GraphDates,
-            'user_id': user_id
-        })
-    })
+    console.log('Try: updating DB GraphDates');
+    let data = {user_id, GraphDates};
+    update_post(data);
+    // fetch('http://192.168.1.156:4000/update',
+    // {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         'GraphDates': GraphDates,
+    //         'user_id': user_id
+    //     })
+    // })
     
-    .then(res=>res.json())
-    .then(data=>{
-        // console.log('the data');
-        // console.log(data);
-    })
-    .catch((err)=> console.log(err))
+    // .then(res=>res.json())
+    // .then(data=>{
+    //     // console.log('the data');
+    //     // console.log(data);
+    // })
+    // .catch((err)=> console.log(err))
   }
 
   updateDbPlanList = (planList, user_id) => {
-    console.log('Try: updating DB');
-    fetch('http://192.168.1.156:4000/update',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'planList': planList,
-            'user_id': user_id
-        })
-    })
+    console.log('Try: updating DB planList');
+    console.log('before send to dbplanList[0]', planList[0]);
+    let data = {user_id, planList};
+    update_post(data);
+    // fetch('http://192.168.1.156:4000/update',
+    // {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //         'planList': planList,
+    //         'user_id': user_id
+    //     })
+    // })
     
-    .then(res=>res.json())
-    .then(data=>{
-        // console.log('the data');
-        // console.log(data);
-    })
-    .catch((err)=> console.log(err))
+    // .then(res=>res.json())
+    // .then(data=>{
+    //     // console.log('the data');
+    //     // console.log(data);
+    // })
+    // .catch((err)=> console.log(err))
   }
   
   checkTicks = (tickArr, exNames) => {
@@ -242,26 +254,46 @@ getStartOfMonthArray = (GraphResults, GraphDates, startOfMonthResults, user_id) 
 
   updateHistoryResults = (plan) => {
     let arr = [];
-    let kgVal, exIsBodyWeight;
+    let kgVal = '', exIsBodyWeight = true;
+
 
     for (let i = 0; i < plan.exercisesNames.length; i++) {
-        exIsBodyWeight = plan.lastUpdated[i].isBodyWeight;
-        if (exIsBodyWeight) // case of body weight
-            kgVal = ''; 
-        else 
-            kgVal = plan.lastUpdated[i].kg;
 
-        arr.push({
+        let data = {
             exName: plan.exercisesNames[i],
-            kg: kgVal,
+            kg: null,
             reps: plan.lastUpdated[i].reps,
             sets: plan.lastUpdated[i].sets,
             exName: plan.lastUpdated[i].name,
-            isBodyWeight: exIsBodyWeight,
-        });
+            isBodyWeight: plan.lastUpdated[i].isBodyWeight,
+        };
+
+        
+            // exIsBodyWeight = plan.lastUpdated[i].isBodyWeight;
+            if (plan.lastUpdated[i].isBodyWeight){ // case of body weight
+                data.kgVal = '';
+                // kgVal = ''; 
+            }
+            else {
+                data.kgVal = plan.lastUpdated[i].kg;
+                //kgVal = plan.lastUpdated[i].kg;
+            }        
+
+        arr.push(
+            data
+        // {
+        //     exName: plan.exercisesNames[i],
+        //     kg: kgVal,
+        //     reps: plan.lastUpdated[i].reps,
+        //     sets: plan.lastUpdated[i].sets,
+        //     exName: plan.lastUpdated[i].name,
+        //     isBodyWeight: exIsBodyWeight,
+        // }
+        );
         
     }
     plan.resultsHistory.push(arr);
+    return plan;
   }
 
   
@@ -273,7 +305,7 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
     const user_id = navigation.getParam('user_id');    
     const [isLoading, setisLoading] = useState(false);
 
-    let tickArr = [];
+    let tickArr = [];    
 
     return (
         <View style={styles.plan}>
@@ -296,9 +328,13 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
                 <View style={styles.options}>
                     <MyButton 
                     text='YES'
-                    onPress={()=> {
+                    onPress={async ()=> {
+                        console.log('startOfMonthResults before:',startOfMonthResults);
                         removePlan(planList, plan, GraphResults, startOfMonthResults);
-                        updateDbPlanList(planList, user_id)
+                        console.log('startOfMonthResults After:',startOfMonthResults);
+                        await updateDbPlanList(planList, user_id);
+                        await updateDbGraphResults(GraphResults, user_id);
+                        await updateDbStartOfMonthResults(startOfMonthResults, user_id);
                         setpopUp(false);
                         navigation.navigate('Home');
                     }}
@@ -353,10 +389,13 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
                         setisLoading(true);
                         // check all ticks green
                         if (checkTicks(tickArr, plan.exercisesNames)){
+                        
                         seterrTicks('');
                         // calculate the result
                         let result = calculateResult(plan.lastUpdated);;
                         let resToGraph;
+                       
+
                         // find place in array of GraphResults to push 
                         let index = await findGraphResultsIndex(plan.title, GraphResults, user_id);
                         
@@ -365,18 +404,24 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
                             plan.lastResult = result;
 
                         } else { 
+                            planList.indexOf(plan)
                             //set the first place in the chart
                             resToGraph = planList.indexOf(plan) * 2 + 1; // + 15
                             plan.lastResult = result;
                             
+
                         }  
-                        
+                       
+
                         //update historyResults
-                        await updateHistoryResults(plan);
-                        //send result to tracker                        
+                        plan = await updateHistoryResults(plan);
+                        //send result to tracker         
                         GraphResults[index].data.push(resToGraph);
+                        
                         // update db
+                    
                         await updateDbGraphResults(GraphResults, user_id);
+                        
                         //get today date
                         let today = getTodayDate(GraphDates);
                         GraphDates.push(today);
@@ -385,6 +430,7 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
                         //reset start of month array
                         await getStartOfMonthArray(GraphResults, GraphDates, startOfMonthResults, user_id);
                         // update planList for 'lastUpdated'
+                        console.log('reach');
                         await updateDbPlanList(planList, user_id);
                         // back Home page
                         navigation.navigate('Home');

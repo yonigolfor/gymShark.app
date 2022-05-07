@@ -36,32 +36,99 @@ export default class Home extends Component {
 
 
 
-checkHasData = async (user_id) => {
-    this.isLoading = true;
-    fetch('http://192.168.1.156:4000/checkHasData',
-    {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            'user_id': user_id
-        })
-    })
+// checkHasData = async (user_id) => {
+//     this.isLoading = true;
+//     fetch('http://192.168.1.156:4000/checkHasData',
+//     {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify({
+//             'user_id': user_id
+//         })
+//     })
     
-    .then(res=>res.json())
-    .then(data=>{ // data.user => all data 
-      if (data.user.planList.length && data.user.planList.length > 0){ // => update user details
-        this.updateUserData(data.user);
-      }
-      this.isLoading = false;
+//     .then(res=>res.json())
+//     .then(data=>{ // data.user => all data 
+//       if (data.user.planList.length && data.user.planList.length > 0){ // => update user details
+//         this.updateUserData(data.user);
+//       }
+//       this.isLoading = false;
       
-    })
+//     })
     
-    .catch((err)=> console.log("Huston, we got a problem: ",err))
+//     .catch((err)=> console.log("Huston, we got a problem: ",err))
+// }
+
+addLastUpdatedArr = (planList) => {
+  let updatedPlan = planList;
+  for (let i = 0; i < planList.length; i++) {
+    
+    if (!Array.isArray(planList[i].lastUpdated)){
+      updatedPlan[i].lastUpdated = [];
+    }
+      
+    
+    if (!Array.isArray(planList[i].resultsHistory)){
+      updatedPlan[i].resultsHistory = []; 
+    }
+      
+    
+  }
+  
+  return updatedPlan;
+}
+
+
+checkHasData = () => {
+  let planList ,GraphDates ,startOfMonthResults ,GraphResults;
+  try{
+    planList = this.props.navigation.getParam('planList').planList;
+    GraphDates = this.props.navigation.getParam('GraphDates').GraphDates;
+    startOfMonthResults = this.props.navigation.getParam('startOfMonthResults').startOfMonthResults;
+    GraphResults = this.props.navigation.getParam('GraphResults').GraphResults;
+  }
+  catch(err){
+    console.log('cath err:', err);
+  }
+
+  console.log("planList found:", planList);
+
+
+  if (!planList){ // new user
+    console.log('user has NOT plans');
+    return;
+  }
+  // if (planList.length && planList.length > 0){ // => update user details
+    else{ 
+    // add lastUpdated to plans who doesn't have
+    planList = this.addLastUpdatedArr(planList);
+    
+    if (!Array.isArray(GraphDates))
+      GraphDates = [];
+    
+    if (!Array.isArray(startOfMonthResults))
+      startOfMonthResults = [];
+
+    if (!Array.isArray(GraphResults))
+      GraphResults = [];
+    
+
+    // update class state
+    let userData = {
+      planList: planList,
+      GraphResults: GraphResults,
+      GraphDates: GraphDates,
+      startOfMonthResults: startOfMonthResults,
+    }
+    this.updateUserData(userData);
+  }
+
 }
 
 updateUserData = (user) => {
+ 
   this.setState({
     planList: user.planList,
     GraphResults: user.GraphResults,
@@ -72,24 +139,33 @@ updateUserData = (user) => {
 
 
 async componentDidMount() {
+  const userEmail = this.props.navigation.getParam('email');
   const user_id = this.props.navigation.getParam('userId');
-  console.log('rendered!');
+
+  console.log('rendered! email:',userEmail);
+  console.log('rendered! user_id:',user_id);
   if (user_id){
-  await this.checkHasData(user_id);
+    console.log('in if');
+     this.checkHasData();
+  // await this.checkHasData(user_id);
  
   this.isLoading = false;
   }
 }
 
+getNickName = (email) =>{
+  let index = email.indexOf("@");
+  return email.substring(0, index);
+}
 
 
 render() {
-  const user_id = this.props.navigation.getParam('userId');
+
   const email = this.props.navigation.getParam('email');
+  const user_id = this.props.navigation.getParam('userId');
+  const nickName = this.getNickName(email);
   
-
-
-  return (  
+  return (
     
     <View style={globalStyles.container}>
     <GradientBackground />
@@ -97,14 +173,14 @@ render() {
       this.isLoading ? 
       <LoadingScreen/> : null
       }
-      <Text style={{backgroundColor: '#e0e0d1', padding:5, color: 'black'}}>Welcome {email} !</Text>
+      <Text style={{backgroundColor: '#e0e0d1', padding:5, color: 'black'}}>Welcome {nickName} !</Text>
       
 
       <ScrollView
       ref={ref => this.myScroll = ref}
       >    
       
-    <Text style={globalStyles.textTitle}>{Utils.Title}</Text>
+    <Text style={globalStyles.textAppTitle}>{Utils.Title}</Text>
         <View style={styles.options}>
 
             {/*first button */}
@@ -113,7 +189,9 @@ render() {
               source= {require('../images/results.jpg')}>
                 <GradientButton 
                 text= {`Enter today's results`}
-                onPress= {() => this.props.navigation.navigate('Results', {...this.state, user_id})}
+                onPress= {() => {
+                  this.props.navigation.navigate('Results', {...this.state, user_id});
+                }}
                 opacity= {0.9}
                 
                 />
@@ -128,9 +206,9 @@ render() {
                 text= {`Tracker`}
                 onPress= {() => {
                   if (this.state.GraphResults.length > 0)
-                  this.props.navigation.navigate('Track', this.state);
+                    this.props.navigation.navigate('Track', this.state);
                   else 
-                  console.log('No results !');
+                    console.log('No results !');
                 }}
                 colorsArr={['#330013',  'red', '#ffa366' ]} //[ 'transparent' ,'#4d0026', '#990033']  
                 opacity={0.9}
