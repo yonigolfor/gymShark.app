@@ -5,6 +5,7 @@ import MyButton from '../shared/myButton';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import LoadingScreen from './loadingScreen';
 import { Dimensions } from "react-native";
+import { Language } from '../tools/utils';
 
 
 export default class History extends Component { // - navigation props
@@ -51,6 +52,8 @@ export default class History extends Component { // - navigation props
       )
 
     }
+
+ 
     return arr;
   }
 
@@ -62,10 +65,10 @@ export default class History extends Component { // - navigation props
     return true;
   }
 
-  showPlan = (thePlan, iDecreaser) => {
+  showPlan = (thePlan, iDecreaser, languageSelected) => {
     let planUIarr = [];
     let planData, planLength, kgVal; // kgVal in case of bodyWeight
-    let kgOrBodyWeightStr = 'kg'; // kg by default
+    let kgOrBodyWeightStr = languageSelected == 'English' ? 'kg' : 'ק"ג'; // kg by default
     planLength = thePlan.resultsHistory[0].length;
     
     planUIarr.push(
@@ -76,33 +79,33 @@ export default class History extends Component { // - navigation props
     for (let j = 0; j < planLength; j++) { // loop for every exercise
       planData = thePlan.resultsHistory[thePlan.resultsHistory.length - iDecreaser][j];
       if (planData.isBodyWeight) {
-        kgOrBodyWeightStr = ' Body weight'; // or  Body Weight:
+        kgOrBodyWeightStr = languageSelected == 'English' ? ' Body weight' : ' משקל גוף ל-'; // or  Body Weight:
         kgVal = '';
       }
       else {
-        kgOrBodyWeightStr = ' kg: ';
-        kgVal = `${planData.kgVal},`; 
+        kgOrBodyWeightStr = languageSelected == 'English' ? ' kg: ' : ' במשקל: ';
+        kgVal = `${planData.kgVal} ${languageSelected == 'English' ? '' : "קילו ל-"}`; 
       }
 
       planUIarr.push(
         <View style={styles.exercisesContainer}>
-
           <Text style={styles.exercise}>
+            
+            {/* ex name */}
             {thePlan.exercisesNames[j]}
-          </Text>
+            {/* kg */}
+            {`${kgOrBodyWeightStr}${kgVal}${languageSelected == 'English'? ' reps: ' : " חזרות: "}`}
+            {/* reps UI */}
+            {this.getRepsUI(planData.reps)} 
 
-          <Text style={styles.exercise}>
-            {`${kgOrBodyWeightStr}` + kgVal + " reps: "}</Text>
-          {
-            this.getRepsUI(planData.reps)
-          }
+          </Text>          
         </View>
       )
     }
     return planUIarr;
   }
   
- showAllPlansHistory = (planList) => {
+ showAllPlansHistory = (planList, languageSelected) => {
 
    this.isLoading = true; //loading screen on
    
@@ -118,7 +121,7 @@ export default class History extends Component { // - navigation props
           // show plan
          plansUIarr.push(
            <View style={{...styles.specificPlan, backgroundColor: this.getColor(planList.indexOf(thePlan))}}>
-           {this.showPlan(thePlan, iDecreaser)}
+           {this.showPlan(thePlan, iDecreaser, languageSelected)}
            </View>
          
          )
@@ -140,6 +143,7 @@ export default class History extends Component { // - navigation props
     const screenWidth = Dimensions.get("window").width;
     const screenHeight = Dimensions.get('screen').height;
 
+    const languageSelected = this.props.navigation.getParam('languageSelected');
 
     return (
         <View style= {globalStyles.container}>
@@ -150,9 +154,10 @@ export default class History extends Component { // - navigation props
       
           <ScrollView>
 
-            <Text style={globalStyles.textTitle}>My History</Text>
+            <Text style={globalStyles.textTitle}>{languageSelected == 'English'? Language.historyTitle.en 
+            : Language.historyTitle.he}</Text>
             {
-              this.showAllPlansHistory(planList)
+              this.showAllPlansHistory(planList, languageSelected)
             }
             {/* <Button onPress={()=> console.log(planList[0].resultsHistory)} title='get History to console' /> */}
                     

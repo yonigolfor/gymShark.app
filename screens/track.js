@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, Modal } from 'react-native';
 import  { globalStyles } from '../shared/styles';
 import { Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
@@ -10,6 +10,8 @@ import { captureRef  } from 'react-native-view-shot';
 import * as Sharing from 'expo-sharing';
 import { LinearTextGradient } from "react-native-text-gradient"; // +link
 import GradientBackground from '../shared/gradientBackground';
+import update_post from '../myObjects/dbCommunication';
+import { Language } from '../tools/utils';
 
 
 getPlanList = (navigation) => {
@@ -139,6 +141,12 @@ let openShareDialogAsync = async (screenShotUri) => {
 export default function Track( { navigation } ) {
   let GraphResults = navigation.getParam('GraphResults');
   let startOfMonthResults = navigation.getParam('startOfMonthResults');
+  const user_id = navigation.getParam('user_id');
+  const [hasSawTracker, setHasSawTracker] = useState(navigation.getParam('hasSawTracker'));
+  const languageSelected = navigation.getParam('languageSelected');
+
+  console.log('GraphRes:', GraphResults);
+
   const viewRef = useRef(null);
 
   const data = {
@@ -154,10 +162,46 @@ export default function Track( { navigation } ) {
   };
 
 
+  
+
   return (
 
     <View ref={viewRef} collapsable={false} style={globalStyles.container}>
   
+   
+    {/* case no plans modal */}
+    <Modal transparent visible={!hasSawTracker} animationType='fade'>
+    <View style={globalStyles.modalPopup}>
+      <View style={globalStyles.modalContainer}>
+        <Image 
+        source={require('../images/boy-chart.png')} 
+        style={{height:150, width:190, marginVertical:10}}
+        />
+        <Text
+        style={{fontSize:15}}
+        >
+          {languageSelected == 'English'? Language.trackerModalText.en
+                : Language.trackerModalText.he}
+        </Text>
+        <MyButton 
+        text={languageSelected == 'English'? Language.trackerModalBtn.en
+        : Language.trackerModalBtn.he}
+        onPress={()=>{
+         // update in db that is not new in tracker anymore
+         
+         update_post({user_id, sawTracker: true});
+         setHasSawTracker(true);
+         // cancel the popup
+        }} 
+        style={{padding:10, marginTop: 20, borderWidth: 1, 
+          borderRadius:10, fontSize:20, fontWeight: 'bold', 
+          fontStyle:'italic', backgroundColor: 'rgba(0,0,0,0.1)'}}
+        />
+      </View>
+    </View>
+  </Modal>
+  
+
        <ScrollView>
        <GradientBackground
           //#800040
@@ -172,7 +216,8 @@ export default function Track( { navigation } ) {
           colorsArr={['#800040' , '#4d0000', 'black']} 
           //['#800040' , '#4d0000', 'black' ]
           /> */}
-          <Text style={{...globalStyles.subTitle, textAlign: 'center', fontSize: 45, color:'white',}}>Overall progress</Text>
+          <Text style={{...globalStyles.subTitle, textAlign: 'center', fontSize: 45, color:'white',}}>{languageSelected == 'English'? Language.trackerTitle.en
+        : Language.trackerTitle.he}</Text>
           <View
          style={{ flex: 1,
           justifyContent: 'center',
@@ -208,7 +253,8 @@ export default function Track( { navigation } ) {
 
 
 
-         <Text style={{...globalStyles.subTitle, textAlign: 'center', color:'white'}}>{`${Utils.getMonth} improvements`}</Text>
+         <Text style={{...globalStyles.subTitle, textAlign: 'center', color:'white'}}>{languageSelected == 'English'? `${Utils.getMonth} improvements`
+                : `תהליך חודש ${Utils.getMonthHebrew} `}</Text>
         
         <View>
           <GradientBackground
@@ -225,7 +271,8 @@ export default function Track( { navigation } ) {
           orientation= {'horizontal'}
           data={[
             {
-              name: '1st ',
+              name: languageSelected == 'English'? '1st'
+              : 'תחילת החודש',
               symbol: {
                 fill: '#757070' //was purple
               }, 
@@ -235,7 +282,8 @@ export default function Track( { navigation } ) {
               }
             },
             {
-              name: 'Today',
+              name: languageSelected == 'English'? 'Today'
+              : 'היום', 
               symbol: {
                 fill: '#ff8080'
               }, 

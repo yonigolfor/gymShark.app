@@ -8,12 +8,13 @@ import LoadingScreen from './loadingScreen';
 import GradientButton from '../shared/gradientButton';
 import GradientBackground from '../shared/gradientBackground';
 import { Utils } from '../tools/utils';
+import { Language } from '../tools/utils';
 import MyButton from '../shared/myButton';
 
 
-const cookies = new Cookies();
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get('screen').height;
+
+// const cookies = new Cookies();
+
 
 export default class Home extends Component {
   constructor(){
@@ -25,6 +26,9 @@ export default class Home extends Component {
         GraphDates: [],
         startOfMonthResults: [],
         isUpdated: false,
+        // tools for new user
+        hasCreatedPlan: false,
+        hasSawTracker: false,
 
         // NEW!
         // myMsrmnts: [{title: 'Biceps', value: ''}, {title: 'Chest', value: ''}, {title: 'Shoulders', value: ''}, 
@@ -33,6 +37,19 @@ export default class Home extends Component {
     };   
     this.isLoading = false;
 }
+
+setHasSawTracker = (bool) => {
+  this.setState({
+    hasSawTracker: bool 
+  })
+}
+
+setHasCreatedPlan = (bool) => {
+  this.setState({
+    hasCreatedPlan: bool 
+  })
+}
+
 
 
 
@@ -81,27 +98,64 @@ addLastUpdatedArr = (planList) => {
 }
 
 
-checkHasData = () => {
-  let planList ,GraphDates ,startOfMonthResults ,GraphResults;
+checkHasData = (user_id) => {
+  let planList ,GraphDates ,startOfMonthResults ,GraphResults, 
+  hasCreatedPlan, hasSawTracker, languageSelected;
   try{
     planList = this.props.navigation.getParam('planList').planList;
     GraphDates = this.props.navigation.getParam('GraphDates').GraphDates;
     startOfMonthResults = this.props.navigation.getParam('startOfMonthResults').startOfMonthResults;
     GraphResults = this.props.navigation.getParam('GraphResults').GraphResults;
+    hasCreatedPlan = this.props.navigation.getParam('hasCreatedPlan');
+    // hasSawTracker = this.props.navigation.getParam('hasSawTracker').hasSawTracker;
+    // languageSelected = this.props.navigation.getParam('language');
+
   }
   catch(err){
     console.log('cath err:', err);
   }
+  try{
+    // check hasSawTracker
+    hasSawTracker = this.props.navigation.getParam('hasSawTracker').hasSawTracker;
+  }
+  catch(err){
+    console.log('caught err while checking hasSawTracker');
+    hasSawTracker = false;
+  }
+  try{
+    // check languageSelected = 'English'
+    languageSelected = this.props.navigation.getParam('language');
+  }
+  catch(err){
+    console.log('caught err while checking languageSelected', err);
+  }
+  try{
+    // check hasCreatedPlan
+    hasCreatedPlan = this.props.navigation.getParam('hasCreatedPlan').hasCreatedPlan;
+  }
+  catch(err){
+    console.log('caught err while checking hasCreatedPlan');
+    hasCreatedPlan = false;
+  }
 
   console.log("planList found:", planList);
+  console.log("hasSawTracker?",hasSawTracker);
+  console.log("hasCreatedPlan?",hasCreatedPlan); // if not = undefined
+  console.log("languageSelected?",languageSelected); // if not = undefined
 
 
   if (!planList){ // new user
+    // send user to create new plan
     console.log('user has NOT plans');
+    this.setState({
+      hasCreatedPlan: true, // now going to create one
+      hasSawTracker: hasSawTracker,
+    })
+    this.props.navigation.navigate('Results', {...this.state, user_id, languageSelected});
+
     return;
   }
-  // if (planList.length && planList.length > 0){ // => update user details
-    else{ 
+  else{ 
     // add lastUpdated to plans who doesn't have
     planList = this.addLastUpdatedArr(planList);
     
@@ -121,6 +175,9 @@ checkHasData = () => {
       GraphResults: GraphResults,
       GraphDates: GraphDates,
       startOfMonthResults: startOfMonthResults,
+      hasCreatedPlan: hasCreatedPlan,
+      hasSawTracker: hasSawTracker,
+      
     }
     this.updateUserData(userData);
   }
@@ -134,6 +191,8 @@ updateUserData = (user) => {
     GraphResults: user.GraphResults,
     GraphDates: user.GraphDates,
     startOfMonthResults: user.startOfMonthResults,
+    hasCreatedPlan: user.hasCreatedPlan,
+    hasSawTracker: user.hasSawTracker,
   })
 }
 
@@ -146,7 +205,7 @@ async componentDidMount() {
   console.log('rendered! user_id:',user_id);
   if (user_id){
     console.log('in if');
-     this.checkHasData();
+     this.checkHasData(user_id);
   // await this.checkHasData(user_id);
  
   this.isLoading = false;
@@ -159,12 +218,20 @@ getNickName = (email) =>{
 }
 
 
+
+
 render() {
 
   const email = this.props.navigation.getParam('email');
   const user_id = this.props.navigation.getParam('userId');
   const nickName = this.getNickName(email);
-  
+  const languageSelected = this.props.navigation.getParam('language');
+  // console.log('email:', email);
+  // console.log('languageSelected:', languageSelected);
+  // const screenWidth = Dimensions.get("window").width;
+  // const screenHeight = Dimensions.get('screen').height;
+  // const squareWidthSizeByPercent = screenWidth * 55.556 / 100;
+
   return (
     
     <View style={globalStyles.container}>
@@ -173,7 +240,8 @@ render() {
       this.isLoading ? 
       <LoadingScreen/> : null
       }
-      <Text style={{backgroundColor: '#e0e0d1', padding:5, color: 'black'}}>Welcome {nickName} !</Text>
+      <Text style={{backgroundColor: '#e0e0d1', padding:5, color: 'black'}}> {languageSelected == 'English'? Language.greetingHomePage.en
+                  : Language.greetingHomePage.he} {nickName} !</Text>
       
 
       <ScrollView
@@ -181,39 +249,40 @@ render() {
       >    
       
     <Text style={globalStyles.textAppTitle}>{Utils.Title}</Text>
-        <View style={styles.options}>
+        <View style={globalStyles.options}>
 
-            {/*first button */}
+            {/*first button - enter results*/}
             <ImageBackground 
               style={globalStyles.headerImage}
               source= {require('../images/results.jpg')}>
                 <GradientButton 
-                text= {`Enter today's results`}
+                text= {languageSelected == 'English'? Language.enterResultsButton.en
+                  : Language.enterResultsButton.he}
                 onPress= {() => {
-                  this.props.navigation.navigate('Results', {...this.state, user_id});
+                  this.props.navigation.navigate('Results', {...this.state, user_id, languageSelected});
                 }}
                 opacity= {0.9}
                 
                 />
             </ImageBackground>
 
-             {/* second btn */}
+            {/* second btn - tracker*/}
             <ImageBackground 
             style={globalStyles.headerImage}
             source= {require('../images/charts.jpg')}
             >
                 <GradientButton 
-                text= {`Tracker`}
+                text= {languageSelected == 'English'? Language.trackerButton.en
+                : Language.trackerButton.he}
                 onPress= {() => {
-                  if (this.state.GraphResults.length > 0)
-                    this.props.navigation.navigate('Track', this.state);
-                  else 
-                    console.log('No results !');
+                    this.props.navigation.navigate('Track', {...this.state, user_id, languageSelected});
+                    this.setHasSawTracker(true);
                 }}
                 colorsArr={['#330013',  'red', '#ffa366' ]} //[ 'transparent' ,'#4d0026', '#990033']  
                 opacity={0.9}
                 />
             </ImageBackground>
+           
 
 
           {/* shopping btn */}

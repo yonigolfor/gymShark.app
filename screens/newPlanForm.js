@@ -10,6 +10,8 @@ import { Dimensions } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 //import { TouchableOpacity } from 'react-native-gesture-handler';
 import update_post from "../myObjects/dbCommunication";
+import { Language } from '../tools/utils';
+
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get('screen').height;
@@ -30,7 +32,7 @@ const planFields = {
     return exNames.filter( Boolean );
   }
 
-  checkValidExNames = (exNames, setexInputErr) => {
+  checkValidExNames = (exNames, setexInputErr, languageSelected) => {
     exNames = exNames.filter( Boolean );
     if (exNames.length > 0) { // not empty
       
@@ -39,7 +41,8 @@ const planFields = {
         for (let j = i + 1; j < exNames.length; j++) {
           if (exNames[i] == exNames[j]){
             // set error duplicate
-            setexInputErr(`Can't duplicate same exercise!`);
+            setexInputErr(languageSelected == 'English'? Language.newPlanFormErrDuplicateEx.en
+            : Language.newPlanFormErrDuplicateEx.he);
             return false;
           }
         }
@@ -49,7 +52,8 @@ const planFields = {
     else {
       // empty list
       //set error empty list
-      setexInputErr('Exercises list is empty!');
+      setexInputErr(languageSelected == 'English'? Language.newPlanFormErrExNames.en
+      : Language.newPlanFormErrExNames.he);
       return false;
     }
   }
@@ -113,10 +117,11 @@ checkDefaultRepsSets = (values) => {
 }
 
 
-
-export default function NewPlanForm({ planList, setopenPopUp, user_id }) {
+export default function NewPlanForm({ planList, setopenPopUp, user_id, languageSelected }) {
   const [exercisesInputs, setExercisesInputs] = useState([0,1,2,3,4,5]);
   const [exInputErr, setexInputErr] = useState('');
+  
+
 
     return(
         <View style={styles.firstPage}>
@@ -126,14 +131,15 @@ export default function NewPlanForm({ planList, setopenPopUp, user_id }) {
            <Ionicons name="return-down-back-outline" size={35} color="#333333"/>
           </TouchableOpacity>
             
-            <Text style={{...globalStyles.textTitle, marginTop: "12%"}}>NEW PLAN</Text>
+            <Text style={{...globalStyles.textTitle, marginTop: "12%"}}>{languageSelected == 'English'? Language.newPlanFormTitle.en
+                  : Language.newPlanFormTitle.he}</Text>
             <Formik
             initialValues={planFields}
             validationSchema={yupErrors}
             onSubmit={(values)=>{
               setexInputErr('');
 
-              if (checkValidExNames(values.exercisesNames, setexInputErr)) {
+              if (checkValidExNames(values.exercisesNames, setexInputErr, languageSelected)) {
                 
                 values = checkDefaultRepsSets(values);
                 values.key = nextId();
@@ -150,44 +156,50 @@ export default function NewPlanForm({ planList, setopenPopUp, user_id }) {
             >
             {(props)=> (
                 <View style={styles.inputContainer}>
-                    <Text style={styles.enterStyle}>Enter plan name :</Text>
+                    <Text style={styles.enterStyle}>{languageSelected == 'English'? Language.newPlanFormPlanName.en
+                  : Language.newPlanFormPlanName.he}</Text>
                     <TextInput
                     onBlur={props.handleBlur('title')}
                     multiline
                     style={globalStyles.input}
-                    placeholder='PLAN NAME'
+                    placeholder={languageSelected == 'English'? 'PLAN NAME'
+                    : 'שם האימון'}
                     onChangeText={props.handleChange('title')}
                     value={props.values.title}
                     />
                     <Text style={globalStyles.errorMsg}>{props.touched.title && props.errors.title}</Text>
-                    <Text style={styles.enterStyle}>Enter general sets per exercise :</Text>
+                    <Text style={styles.enterStyle}>{languageSelected == 'English'? Language.newPlanFormSets.en
+                  : Language.newPlanFormSets.he}</Text>
                     <TextInput 
                     onBlur={props.handleBlur('generalSets')}
                     style={globalStyles.input}
-                    placeholder='GENERAL SETS'
+                    placeholder={languageSelected == 'English'? 'GENERAL SETS' : 'סטים לתרגיל'}
                     onChangeText={props.handleChange('generalSets')}
                     value={props.values.generalSets}
                     keyboardType= 'numeric'
                     />
                     <Text style={globalStyles.errorMsg}>{props.touched.title && props.errors.generalSets}</Text>
 
-                    <Text style={styles.enterStyle}>Enter general reps per set :</Text>
+                    <Text style={styles.enterStyle}>{languageSelected == 'English'? Language.newPlanFormReps.en
+                  : Language.newPlanFormReps.he}</Text>
                     <TextInput 
                     onBlur={props.handleBlur('generalReps')}
                     style={globalStyles.input}
-                    placeholder='GENERAL REPS'
+                    placeholder={languageSelected == 'English'? 'GENERAL REPS' : 'חזרות לכל סט'}
                     onChangeText={props.handleChange('generalReps')}
                     value={props.values.generalReps}
                     keyboardType= 'numeric'
                     />
                     <Text style={globalStyles.errorMsg}>{props.touched.generalReps && props.errors.generalReps}</Text>
 
-                    <Text style={styles.enterStyle}>Enter exercises names :</Text>
+                    <Text style={styles.enterStyle}>{languageSelected == 'English'? Language.newPlanFormExNames.en
+                  : Language.newPlanFormExNames.he}</Text>
                     {exercisesInputs.map((prop)=> {
                       return(
                         <TextInput
                         style={{...globalStyles.input, marginBottom: 15}}
-                        placeholder={`EX NAME ${prop+1}`}
+                        placeholder={languageSelected == 'English'? `EX NAME ${prop+1}` 
+                      : `שם תרגיל ${prop+1}`}
                         onChangeText={props.handleChange(`exercisesNames[${prop}]`)}
                         value={props.values.exercisesNames[prop]}
                         key={prop}
@@ -200,7 +212,8 @@ export default function NewPlanForm({ planList, setopenPopUp, user_id }) {
                       { 
                         exercisesInputs.length != 10 &&
                         <MyButton 
-                        text= 'Add exercise'
+                        text= {languageSelected == 'English'? Language.newPlanFormAddEx.en
+                        : Language.newPlanFormAddEx.he}
                         style={{...styles.downBtns,}}
                         onPress= {(previousInputs)=> {
                           if (exercisesInputs.length < 10){
@@ -210,9 +223,10 @@ export default function NewPlanForm({ planList, setopenPopUp, user_id }) {
                         }}
                         />
                       }
-
+                    
                       <MyButton 
-                      text= 'Submit'
+                      text= {languageSelected == 'English'? Language.newPlanFormSubmit.en
+                      : Language.newPlanFormSubmit.he}
                       onPress= {props.handleSubmit} // backgroundColor: #ff4d4d , 00b300
                       style={{...styles.downBtns, marginTop: 30, backgroundColor: '#66a3ff', color: 'white', height: screenHeight / 9, fontSize: 24 }}
                       />

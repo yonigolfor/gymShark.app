@@ -5,8 +5,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get('screen').height;
+const squareWidthSizeByPercent = screenWidth * 55.556 / 95;
+const squareHeightSizeByPercent = screenHeight * 20.811 / 95;
+
 
 export const globalStyles = StyleSheet.create({
+    options: {
+      display:'flex',
+      // flex: 1,
+      // alignItems: "center",
+      paddingBottom: 20,
+      justifyContent:"center",
+      alignItems:"center",
+      
+    },
     container: {
         flex: 1,
         backgroundColor: '#FAEBD7',  //'#FAEBD7' - basic . red: #ff4d4d . black: #262626
@@ -93,7 +105,36 @@ export const globalStyles = StyleSheet.create({
         fontWeight: '900',
         marginBottom: 20,
         color:'gray' // basic: 'gray'
+      },
+      modalPopup: {
+        flex:1,
+        backgroundColor: 'rgba(0,0,0,0.5)',//rgba(0,0,0,0.5)
+        justifyContent: 'center',
+        alignItems: 'center'
+      },
+      modalContainer: {
+        width: '80%',
+        backgroundColor:'white',
+        paddingHorizontal: 20,
+        paddingVertical: 30,
+        borderRadius: 20,
+        alignItems:'center'
+      },
+      homeBtn: {
+        backgroundColor: '#80bfff', //#80b3ff blue . '#80bfff' => basic, red: #ff4d4d
+        color: 'black',
+        fontSize: 24,
+        fontWeight: 'bold',
+        borderWidth: 1,
+        padding: 8,
+        // marginTop: 24,
+        height: squareHeightSizeByPercent, //154
+        width: squareWidthSizeByPercent,
+        textAlign: "center",
+        justifyContent: 'center',
       }
+
+
           // textButtonsHome: {
     //     backgroundColor: 'white',
     //     fontSize: 24,

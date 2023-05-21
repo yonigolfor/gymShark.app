@@ -71,6 +71,12 @@ updateDbPlanList = (planList, user_id) => {
     // })
     // .catch((err)=> console.log(err))
   }
+
+  updateDbStartOfMonthResults = (startOfMonthResults, user_id) => {
+    console.log('Try: updating DB startOfMonthRes');
+    let data = {user_id, startOfMonthResults};
+    update_post(data);
+  }
   
   updateDbGraphResults = (GraphResults, user_id) => {
     console.log('Try: updating DB');
@@ -97,7 +103,7 @@ updateDbPlanList = (planList, user_id) => {
   }
 
 
-export default function MyLongPressButton({ navigation, onPress, title, style, planList, GraphResults, startOfMonthResults, user_id }) {
+export default function MyLongPressButton({ navigation, onPress, title, style, planList, GraphResults, startOfMonthResults, user_id, languageSelected }) {
     // the animation *****
     const animation = new Animated.Value(0);
 
@@ -128,21 +134,23 @@ export default function MyLongPressButton({ navigation, onPress, title, style, p
             containerStyle= {styles.overlayStyle}
             childrenWrapperStyle= {styles.overlayChildrenStyle}
             >
-                <Text>{`Do you want to remove '${title}' ?`}</Text>
+                <Text>{languageSelected == 'English' ? `Do you want to remove '${title}' ?`
+                : `האם להסיר את האימון '${title}' ?`}</Text>
                 <View style={styles.options}>
                     <MyButton 
-                    text='YES'
+                    text={languageSelected == 'English' ? 'YES': "כן"}
                     onPress={()=> {
                         removeAPlan(planList, title, GraphResults, startOfMonthResults);
                         updateDbPlanList(planList, user_id);
                         updateDbGraphResults(GraphResults, user_id);
+                        updateDbStartOfMonthResults(startOfMonthResults, user_id);
                         setpopUp(false);
                         navigation.navigate('Home');
                     }}
-                    style={styles.btnOption}
+                    style={styles.btnOptionDelete}
                     />
                     <MyButton 
-                    text='NO'
+                    text={languageSelected == 'English' ? 'NO': "לא"}
                     onPress={()=> {
                     setpopUp(false);
                     }}
@@ -194,7 +202,19 @@ const styles = StyleSheet.create({
         padding: 10,
         borderWidth: 1, 
         borderRadius:20, 
+        margin:20,
+        // backgroundColor:'rgba(0, 255, 63, 0.2)',
+    },
+    btnOptionDelete: {
+        height: 60,
+        width: 70,
+        textAlign: "center",
+        textAlignVertical: "center",
+        padding: 10,
+        borderWidth: 1, 
+        borderRadius:20, 
         margin:20,  
+        backgroundColor:'rgba(255, 0, 0, 0.3)',// rgba(230, 0, 0)
     },
     overlayStyle: {
         backgroundColor: 'rgba(0, 0, 0 ,0.4)',

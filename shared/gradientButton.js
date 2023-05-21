@@ -12,7 +12,7 @@ export default function GradientButton({ colorsArr, text, buttonStyle, textStyle
             <TouchableOpacity onPress={onPress}>
                 <LinearGradient
                 colors={colorsArr || ['red', '#ff4d4d', '#ff944d']} //['red', '#ff4d4d', '#ff944d']
-                style={buttonStyle || {...styles.homeBtn, backgroundColor: 'none', opacity: opacity }}
+                style={buttonStyle || {...globalStyles.homeBtn, backgroundColor: 'none', opacity: opacity }}
                 >
                     <Text style={textStyle || styles.text}>
                     {text}
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 8,
         // marginTop: 24,
-        height: 154,
+        height: 154, //154
         width: 200,
         textAlign: "center",
         justifyContent: 'center'

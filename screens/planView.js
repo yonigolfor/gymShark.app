@@ -31,6 +31,7 @@ export default class PlanView extends Component {
   
   render(){
 
+    // console.log("in planView language:", this.props.navigation.getParam('languageSelected'));
 
     return(
           <View style={globalStyles.container}> 
@@ -46,7 +47,9 @@ export default class PlanView extends Component {
               startOfMonthResults= {this.props.navigation.getParam('startOfMonthResults')}
               navigation={this.props.navigation}
               myScroll={this.myScroll}
-              decreaseScroll={this.decreaseScroll}/>
+              decreaseScroll={this.decreaseScroll}
+              languageSelected={this.props.navigation.getParam('languageSelected')}
+              />
             </ScrollView>
          </View>
     )

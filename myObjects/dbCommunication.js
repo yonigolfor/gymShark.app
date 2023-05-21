@@ -21,6 +21,11 @@ const update_post = async (updateUser) => {
       await handleGraphDates(updateUser);
       // res.status(200).json({...updateUser});
     }
+    else
+    if (updateUser.sawTracker) { // case: GraphDates updated
+      await handleSawTracker(updateUser);
+      // res.status(200).json({...updateUser});
+    }
   }
     catch (err) {
       console.log(err);
@@ -31,10 +36,18 @@ const update_post = async (updateUser) => {
   export default update_post;
   
 
+  const handleSawTracker = async (updateUser) => {
+    const db = getDatabase();
+    const reference = ref(db, 'users/' + updateUser.user_id + '/hasSawTracker');
+    await set ( reference, {
+      hasSawTracker: true
+    });
+  }
+
   const handlePlanList = async (updateUser) => {
     const db = getDatabase();
     const reference = ref(db, 'users/' + updateUser.user_id + '/planList');
-    console.log('results history for Two plan:', updateUser.planList[0].resultsHistory);
+    // console.log('results history for Two plan:', updateUser.planList[0].resultsHistory);
     await set ( reference, {
         planList: updateUser.planList
     });
@@ -51,7 +64,7 @@ const update_post = async (updateUser) => {
   }
 
   const handleStartOfMonthResults = async (updateUser) => {
-    
+    console.log('startOfmontRes Before:', updateUser.startOfMonthResults);
     const db = getDatabase();
     const reference = ref(db, 'users/' + updateUser.user_id + '/startOfMonthResults');
     
@@ -67,4 +80,7 @@ const update_post = async (updateUser) => {
     await set ( reference, {
       GraphDates: updateUser.GraphDates
     });
+
   }
+
+  

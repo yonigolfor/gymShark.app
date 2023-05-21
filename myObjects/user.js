@@ -1,9 +1,9 @@
 class User {
-    constructor(email, password, rememberMe, userId) {
+    constructor(email, password, selectedLanguage, userId) {
       this.userId = userId;
       this.email = email;
       this.password = password;
-      this.rememberMe = rememberMe;
+      this.selectedLanguage = selectedLanguage;
     }
 
     set setUid(uid) {
@@ -12,7 +12,7 @@ class User {
     // method
     toString() {
         return `email: ${this.email}, pass: ${this.password}, 
-            remember: ${this.rememberMe}`;
+            language: ${this.language}`;
       }
   }
 

@@ -10,6 +10,16 @@ import { Utils } from '../tools/utils';
 import { globalStyles } from '../shared/styles';
 import LoadingScreen from '../screens/loadingScreen';
 import update_post from '../myObjects/dbCommunication';
+import { Language } from '../tools/utils';
+// advertisments:
+import { 
+    AdMobBanner,
+    AdMobInterstitial,
+    PublisherBanner,
+    AdMobRewarded,
+    setTestDeviceIDAsync,
+  } from 'expo-ads-admob';
+
 
 calculateResult = (inputs) => {
 let result, repsCounter, finalResult = 0, kgVal; // kgVal in case of Body Weight.
@@ -145,8 +155,7 @@ getStartOfMonthArray = (GraphResults, GraphDates, startOfMonthResults, user_id) 
 
   updateDbGraphResults = (GraphResults, user_id) => {
     console.log('Try: updating DB GraphResults');
-    console.log('updateDbGraphResults', GraphResults);
-    console.log('graphResults: ', GraphResults);
+    console.log('Before updateDbGraphResults', GraphResults);
     let data = {user_id, GraphResults};
     update_post(data);
     // fetch('http://192.168.1.156:4000/update',
@@ -296,25 +305,38 @@ getStartOfMonthArray = (GraphResults, GraphDates, startOfMonthResults, user_id) 
     return plan;
   }
 
+  const displayRewardAd = async (unitId) => {
+    // Display a rewarded ad
+    await AdMobRewarded.setAdUnitID(unitId); 
+    await AdMobRewarded.requestAdAsync();
+    await AdMobRewarded.showAdAsync();
+  }
+
   
   
-export default function Plan({ plan, navigation, GraphResults, planList, GraphDates, startOfMonthResults, myScroll, decreaseScroll }) {
+export default function Plan({ plan, navigation, GraphResults, planList, GraphDates, startOfMonthResults, myScroll, decreaseScroll, languageSelected}) {
     const [popUp, setpopUp] = useState(false);
     const [deletePressed, setdeletePressed] = useState(false);
     const [errTicks, seterrTicks] = useState('');
     const user_id = navigation.getParam('user_id');    
     const [isLoading, setisLoading] = useState(false);
+    const adUnitIdTest = 'ca-app-pub-3940256099942544/1033173712';
+    const adUnitIdProduction = 'ca-app-pub-8126820243196990/5522903735';
+//ca-app-pub-8126820243196990~5731605536 = app ID
 
-    let tickArr = [];    
+    let tickArr = [];   
+    
+    if (isLoading)
+        return <LoadingScreen/>
+    else
+        return (
+            <View style={styles.plan}>
 
-    return (
-        <View style={styles.plan}>
-
-            {/* loading layout */}
+            {/* loading layout
             {
                 isLoading ? 
                 <LoadingScreen/> : null
-            }
+            } */}
 
             <Overlay 
             visible={popUp} 
@@ -324,10 +346,11 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
             containerStyle= {styles.overlayStyle}
             childrenWrapperStyle= {styles.overlayChildrenStyle}
             >
-                <Text>{`Do you want to remove '${plan.title}' ?`}</Text>
+                <Text>{languageSelected == 'English' ? `Do you want to remove '${plan.title}' ?`
+                : `האם להסיר את האימון '${plan.title}' ?`}</Text>                
                 <View style={styles.options}>
                     <MyButton 
-                    text='YES'
+                    text={languageSelected == 'English' ? 'YES': "כן"}
                     onPress={async ()=> {
                         console.log('startOfMonthResults before:',startOfMonthResults);
                         removePlan(planList, plan, GraphResults, startOfMonthResults);
@@ -341,7 +364,7 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
                     style={styles.btnOption}
                     />
                     <MyButton 
-                    text='NO'
+                    text={languageSelected == 'English' ? 'NO': "לא"}
                     onPress={()=> {
                     setdeletePressed(false);
                     setpopUp(false);
@@ -380,6 +403,7 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
                         myScroll={myScroll}
                         decreaseScroll={decreaseScroll}
                         tickArr={tickArr}
+                        languageSelected={languageSelected}
                         />
                     ) 
                 )}
@@ -389,62 +413,68 @@ export default function Plan({ plan, navigation, GraphResults, planList, GraphDa
                         setisLoading(true);
                         // check all ticks green
                         if (checkTicks(tickArr, plan.exercisesNames)){
-                        
-                        seterrTicks('');
-                        // calculate the result
-                        let result = calculateResult(plan.lastUpdated);;
-                        let resToGraph;
-                       
+                            //show ads
+                            await displayRewardAd(adUnitIdProduction);
+                           
 
-                        // find place in array of GraphResults to push 
-                        let index = await findGraphResultsIndex(plan.title, GraphResults, user_id);
+                            seterrTicks('');
+                            // calculate the result
+                            let result = calculateResult(plan.lastUpdated);;
+                            let resToGraph;
                         
-                        if (plan.lastResult != 0){
-                            resToGraph = result - plan.lastResult + GraphResults[index].data[GraphResults[index].data.length - 1];
-                            plan.lastResult = result;
 
-                        } else { 
-                            planList.indexOf(plan)
-                            //set the first place in the chart
-                            resToGraph = planList.indexOf(plan) * 2 + 1; // + 15
-                            plan.lastResult = result;
+                            // find place in array of GraphResults to push 
+                            let index = await findGraphResultsIndex(plan.title, GraphResults, user_id);
                             
+                            if (plan.lastResult != 0){
+                                resToGraph = result - plan.lastResult + GraphResults[index].data[GraphResults[index].data.length - 1];
+                                plan.lastResult = result;
 
-                        }  
-                       
+                            } else { 
+                                planList.indexOf(plan)
+                                //set the first place in the chart
+                                resToGraph = planList.indexOf(plan) * 2 + 1; // + 15
+                                plan.lastResult = result;
+                            }  
+                        
 
-                        //update historyResults
-                        plan = await updateHistoryResults(plan);
-                        //send result to tracker         
-                        GraphResults[index].data.push(resToGraph);
+                            //update historyResults
+                            plan = await updateHistoryResults(plan);
+                            //send result to tracker         
+                            GraphResults[index].data.push(resToGraph);
+                            
+                            // update db
                         
-                        // update db
-                    
-                        await updateDbGraphResults(GraphResults, user_id);
-                        
-                        //get today date
-                        let today = getTodayDate(GraphDates);
-                        GraphDates.push(today);
-                        // update db
-                        await updateDbGraphDates(GraphDates, user_id);
-                        //reset start of month array
-                        await getStartOfMonthArray(GraphResults, GraphDates, startOfMonthResults, user_id);
-                        // update planList for 'lastUpdated'
-                        console.log('reach');
-                        await updateDbPlanList(planList, user_id);
-                        // back Home page
-                        navigation.navigate('Home');
+                            await updateDbGraphResults(GraphResults, user_id);
+                            
+                            //get today date
+                            let today = getTodayDate(GraphDates);
+                            GraphDates.push(today);
+                            // update db
+                            await updateDbGraphDates(GraphDates, user_id);
+                            //reset start of month array
+                            await getStartOfMonthArray(GraphResults, GraphDates, startOfMonthResults, user_id);
+                            // update planList for 'lastUpdated'
+                            // console.log('reach');
+                            await updateDbPlanList(planList, user_id);
+                            // console.log('reach');
+                            setisLoading(false);
+                            // back Home page
+                            navigation.navigate('Home');
+                            
                         }
                         else {
                             //err message not all ticks
-                            seterrTicks('Check all exercises!');
+                            seterrTicks(languageSelected == 'English'? Language.planTickAllEx.en :
+                            Language.planTickAllEx.he);
                         }
                         setisLoading(false);
 
                         }}>
                         <Text style={globalStyles.errorMsg}>{errTicks}</Text>
                         <View style={styles.doneExercise}>
-                            <Text style={{color: 'green', margin: 5, fontSize: 20, fontStyle:'italic'}}>DONE</Text>
+                            <Text style={{color: 'green', margin: 5, fontSize: 20, fontStyle:'italic'}}>{languageSelected == 'English'? Language.planDoneBtn.en
+                  : Language.planDoneBtn.he}</Text>
                             <Ionicons name="ios-checkbox-outline" size={44} color="green" />
                         </View>
                         

@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#1a0013', // 1a001a sagol 1a0000
         height: screenHeight,
         width: screenWidth,
-        
+        overflow:"hidden",        
         
     },
     title: {

@@ -15,7 +15,7 @@ findPlaceInList = (planList, name) => {
 }
 
 
-export default function PlansBtnOptions( { navigation, planList, GraphResults, GraphDates, startOfMonthResults, user_id } ) {
+export default function PlansBtnOptions( { navigation, planList, GraphResults, GraphDates, startOfMonthResults, user_id, languageSelected } ) {
 
     return ( 
         <View>
@@ -34,10 +34,11 @@ export default function PlansBtnOptions( { navigation, planList, GraphResults, G
                         onPress={() => {
                             let place = findPlaceInList(planList, item.title);
                             console.log(planList[place]);
-                            navigation.navigate('PlanView', { planList: planList ,plan: planList[place], GraphResults: GraphResults, GraphDates: GraphDates, startOfMonthResults: startOfMonthResults, user_id: user_id});
+                            navigation.navigate('PlanView', { planList: planList ,plan: planList[place], GraphResults: GraphResults, GraphDates: GraphDates, startOfMonthResults: startOfMonthResults, user_id: user_id, languageSelected: languageSelected});
 
                         }}
                         key={nextId()}
+                        languageSelected={languageSelected}
                         /> 
                     ))
                 }    
@@ -50,14 +51,14 @@ const styles = StyleSheet.create({
     selectBtns: {
         flexDirection: 'row', // column row 
         justifyContent: 'space-evenly',
-        
 
     }, 
     planSelectbtns: {
         backgroundColor: '#e6e6e6',
         color: 'red',
         borderRadius:100,
-        width: 100,
+        width: 110,
+        height: 110,
     },
   
   });

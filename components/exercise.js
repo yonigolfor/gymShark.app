@@ -5,6 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import MyButton from '../shared/myButton';
 import { Ionicons } from '@expo/vector-icons';
 import RadioButtonRN from 'radio-buttons-react-native';
+import { Language } from '../tools/utils';
 
 
 
@@ -71,7 +72,7 @@ export default class Exercise extends Component {
             if(this.isValidInputs()){
             this.props.tickArr[this.props.indexInPlan] = true; // add green tick
             this.setState({tickPressed: true});
-            this.scrollDown();
+            // this.scrollDown(); // took it down - no auto scroll
             //let exName =this.props.plan.exercisesNames[this.props.indexInPlan];
             this.addToPlanInputs(this.props.name);
 
@@ -95,19 +96,23 @@ export default class Exercise extends Component {
                     for (let i = 0; i < this.state.sets; i++) { // check every rep input 
                         if (this.state.reps[i] > 0 && this.state.reps[i] < 26  && !isNaN(this.state.reps[i]));
                         else {
-                            this.setState({repsErr: 'Reps must be 1-25'});
+                            this.setState({repsErr: this.props.exerciseRepsRange == 'English'? Language.exerciseFillAllReps.en :
+                            Language.exerciseRepsRange.he});
                             return false;
                         }
                     }
                     return true;
                 } else {
-                    this.setState({repsErr: 'Fill all reps or change number of sets.'})
+                    this.setState({repsErr: this.props.languageSelected == 'English'? Language.exerciseFillAllReps.en :
+                Language.exerciseFillAllReps.he})
                 }
             } else {
-                this.setState({setsErr: 'Sets must be 1-10'})
+                this.setState({setsErr: this.props.languageSelected == 'English'? Language.exerciseSetsRange.en :
+                Language.exerciseSetsRange.he})
             }
         } else{
-            this.setState({kgErr: 'Enter valid kg'})
+            this.setState({kgErr: this.props.languageSelected == 'English'? Language.exerciseValidKg.en :
+            Language.exerciseValidKg.he})
 
         }
         return false;
@@ -170,7 +175,9 @@ export default class Exercise extends Component {
 
 
     render() {
-        const radioBtnOptions = ['Body Weight', 'KG'];
+        const firstRBtn = this.props.languageSelected == 'English'? 'Body Weight' : 'משקל גוף';
+        const secRBtn = this.props.languageSelected == 'English'? 'KG' : 'ק"ג';
+        const radioBtnOptions = [firstRBtn, secRBtn];
         const radioBtnData = [        
             { label: radioBtnOptions[0] },
             { label: radioBtnOptions[1] },     
@@ -182,7 +189,7 @@ export default class Exercise extends Component {
                 return 1;
               
             return 2;
-        }      
+        }     
         
        
         return (
@@ -219,12 +226,13 @@ export default class Exercise extends Component {
                    
             {/*   </View> */}
             <View>
-            <Text>kg</Text> 
+            <Text>{this.props.languageSelected == 'English'? 'kg' 
+            :'ק"ג'}</Text> 
             <TextInput 
             style={globalStyles.input}
             onChange= {(val)=>this.handleKgChange(val.nativeEvent.text)}
             value= {!isNaN(this.state.kg) && this.state.kg}
-            placeholder= {(this.props.plan.lastUpdated[this.props.indexInPlan] && this.props.plan.lastUpdated[this.props.indexInPlan].kg) || 'kg'}
+            placeholder= {(this.props.plan.lastUpdated[this.props.indexInPlan] && this.props.plan.lastUpdated[this.props.indexInPlan].kg) || this.props.languageSelected == 'English'? 'kg' : 'ק"ג'}
             keyboardType='numeric'
             maxLength= {4}
             editable={!this.state.tickPressed} // if tick pressed => disable text input
@@ -234,7 +242,8 @@ export default class Exercise extends Component {
             <Text style={globalStyles.errorMsg}>{this.state.kgErr}</Text>
             {/* </View> */}
 
-            <Text>sets</Text>
+            <Text>{this.props.languageSelected == 'English'? 'sets' 
+            :'סטים'}</Text>
             <TextInput 
             style={globalStyles.input}
             onChangeText={(val)=>this.handleSetsChange(val)}
@@ -247,7 +256,8 @@ export default class Exercise extends Component {
             />
             <Text style={globalStyles.errorMsg}>{this.state.setsErr}</Text>
 
-            <Text>reps</Text>
+            <Text>{this.props.languageSelected == 'English'? 'reps' 
+            :'חזרות'}</Text>
             <View style={styles.reps}>
                 {this.createRepsInputs(this.state.sets)}
             </View>

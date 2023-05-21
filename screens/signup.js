@@ -7,6 +7,7 @@ import Cookies from 'universal-cookie';
 import LoadingScreen from './loadingScreen';
 import { Utils } from '../tools/utils';
 import User from '../myObjects/user';
+import { Picker } from '@react-native-picker/picker';
 
 //*********** */
 
@@ -105,7 +106,10 @@ insertUserToDb = async (db, user) => {
                 userId: user.userId,
                 email: user.email,
                 password: user.password,
-                rememberMe: user.rememberMe
+                language: user.selectedLanguage,
+                // tools to help the user
+                hasCreatedPlan: false,
+                hasSawTracker: false,
             });
 }
 
@@ -152,8 +156,9 @@ const getUserFromDb = async (userId) => {
 export default function Signup({ navigation }) {
     const [emailErr, setemailErr] = useState('');
     const [passwordErr, setpasswordErr] = useState('');
-    const [rememberMe, setrememberMe] = useState(true);
+    // const [rememberMe, setrememberMe] = useState(true);
     const [isLoading, setisLoading] = useState(true); 
+    const [selectedLanguage, setSelectedLanguage] = useState("English");
 
     onAuthStateChanged(auth, (user) => { 
         console.log('user:', user);
@@ -162,7 +167,7 @@ export default function Signup({ navigation }) {
             .then(userData => {
                 console.log("userData from DB:", userData);
                 navigation.replace('Home', userData);
-                setisLoading(false);
+                // setisLoading(false);
             })
             .catch(err => console.log(err));
             
@@ -179,7 +184,7 @@ export default function Signup({ navigation }) {
         createUserWithEmailAndPassword(auth, values.email, values.password)
         .then(userCred => {
             let user = new User(values.email, values.password, 
-                rememberMe, userCred.user.uid);
+                selectedLanguage, userCred.user.uid);
 
             insertUserToDb(db, user)
             .then(()=> {
@@ -304,11 +309,19 @@ export default function Signup({ navigation }) {
                         />
                         <Text style={globalStyles.errorMsg}>{passwordErr}</Text>
                         <View style={{display:"flex", flexDirection: "row-reverse", marginBottom:15, justifyContent: "space-evenly"}}>
-                            <Text style={{...styles.newUser, margin:15}}>Remember me</Text>
-                            <Switch 
+                            <Text style={{...styles.newUser, margin:15}}>Select language</Text>
+                            <Picker
+                                selectedValue={selectedLanguage}
+                                style={{ height: 50, width: 150, backgroundColor: 'transparent' }}
+                                onValueChange={(itemValue, itemIndex) => setSelectedLanguage(itemValue)}
+                            >
+                                <Picker.Item label="English" value="en"  />
+                                <Picker.Item label="עברית" value="he" />
+                            </Picker>
+                            {/* <Switch 
                             value={rememberMe}
                             onValueChange={(val) => setrememberMe(val)}
-                            />
+                            /> */}
                         </View>
                         <Button 
                         title={`start`}

@@ -2,7 +2,7 @@
   "expo": {
     "name": "GolFit",
     "slug": "GolFit",
-    "version": "5.0.1",
+    "version": "5.0.6",
     "privacy": "public",
     "description": "App that helps the athlete track his results at the gym.",
     "orientation": "portrait",
@@ -19,14 +19,20 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-8126820243196990~5731605536"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "android": {
       "package": "gf.golfit",
-      "versionCode": 6
+      "versionCode": 11,
+      "config": {
+        "googleMobileAdsAppId": "ca-app-pub-8126820243196990~5731605536"
+      }
     }
   }
 }
